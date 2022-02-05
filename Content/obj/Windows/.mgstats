@@ -1,0 +1,3 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/tk/source/repos/StrategyRTS/Content/base.png","C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/base.xnb","TextureProcessor","Texture2DContent",531,16469,0,443731
+"C:/Users/tk/source/repos/StrategyRTS/Content/worker.png","C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/worker.xnb","TextureProcessor","Texture2DContent",577,16469,0,0038674

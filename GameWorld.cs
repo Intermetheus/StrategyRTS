@@ -1,17 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace StrategyRTS
 {
     public class GameWorld : Game
     {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+
+        private static List<GameObject> gameObjects = new List<GameObject>();
+        private static List<GameObject> newGameObjects = new List<GameObject>();
+        private static List<GameObject> removeGameObjects = new List<GameObject>();
 
         public GameWorld()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -19,15 +24,19 @@ namespace StrategyRTS
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            MineralWorker myWorker = new MineralWorker();
+            gameObjects.Add(myWorker);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            foreach (GameObject gameObject in gameObjects)
+            {
+                gameObject.LoadContent(Content);
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,7 +44,14 @@ namespace StrategyRTS
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            gameObjects.AddRange(newGameObjects);
+            newGameObjects.Clear();
+
+            foreach (GameObject gameObject in removeGameObjects)
+            {
+                gameObjects.Remove(gameObject);
+            }
+            
 
             base.Update(gameTime);
         }
@@ -44,7 +60,10 @@ namespace StrategyRTS
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            foreach (GameObject gameObject in gameObjects)
+            {
+                gameObject.Draw(spriteBatch);
+            }
 
             base.Draw(gameTime);
         }
