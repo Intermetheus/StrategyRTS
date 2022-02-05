@@ -10,6 +10,7 @@ namespace StrategyRTS
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private SpriteFont arial;
 
         private static List<GameObject> gameObjects = new List<GameObject>();
         private static List<GameObject> newGameObjects = new List<GameObject>();
@@ -23,6 +24,8 @@ namespace StrategyRTS
         public GameWorld()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 1600;
+            graphics.PreferredBackBufferHeight = 900;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -32,6 +35,9 @@ namespace StrategyRTS
             Mineral myMineral = new Mineral();
             gameObjects.Add(myMineral);
 
+            Base myBase = new Base();
+            gameObjects.Add(myBase);
+
             MineralWorker myWorker = new MineralWorker();
             gameObjects.Add(myWorker);
             base.Initialize();
@@ -39,6 +45,7 @@ namespace StrategyRTS
 
         protected override void LoadContent()
         {
+            arial = Content.Load<SpriteFont>("arial");
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             foreach (GameObject gameObject in gameObjects)
@@ -47,13 +54,14 @@ namespace StrategyRTS
             }
         }
 
-        private bool threadsStarted = false; //REMOVE THIS
+        private bool threadsStarted = false; //starts threads of workers created in initialize()
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             GameTimeProp = gameTime;
+
 
             if (!threadsStarted)
             {
@@ -75,7 +83,15 @@ namespace StrategyRTS
             {
                 gameObjects.Remove(gameObject);
             }
-            
+
+            //Check collisions
+            foreach (GameObject gameObject in gameObjects)
+            {
+                foreach (GameObject other in gameObjects)
+                {
+                    gameObject.CheckCollision(other);
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -90,6 +106,8 @@ namespace StrategyRTS
             {
                 gameObject.Draw(spriteBatch);
             }
+
+            //spriteBatch.DrawString(arial, "Minerals: " + 1, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
             spriteBatch.End();
 

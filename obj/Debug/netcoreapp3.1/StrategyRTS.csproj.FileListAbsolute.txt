@@ -38,3 +38,4 @@ C:\Users\tk\source\repos\StrategyRTS\obj\Debug\netcoreapp3.1\StrategyRTS.genrunt
 C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\base.xnb
 C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\worker.xnb
 C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\mineral.xnb
+C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\arial.xnb
