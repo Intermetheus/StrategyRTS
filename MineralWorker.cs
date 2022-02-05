@@ -11,6 +11,8 @@ namespace StrategyRTS
 {
     class MineralWorker : Unit
     {
+        static Semaphore mineralSemaphore = new Semaphore(0,3);
+        
 
         public MineralWorker()
         {
@@ -18,6 +20,7 @@ namespace StrategyRTS
             Position = new Vector2(400, 400);
             resourceBeingHeld = false;
             speed = 250;
+            canMove = true;
         }
 
         public override void LoadContent(ContentManager content)
@@ -31,9 +34,10 @@ namespace StrategyRTS
             {
                 if (!resourceBeingHeld)
                 {
+                    
                     //Extract()
                     resourceBeingHeld = true;
-
+                    Enter();
                 }
             }
             if (other is Base)
@@ -58,7 +62,7 @@ namespace StrategyRTS
                     //Use ToList() to create a copy of gameObjects to prevent changes to a list being looped by another thread
                     //Alternatively use a lock
                     SetDestination<Mineral>();
-                    Move();
+                    
                 }
 
                 if (resourceBeingHeld)
@@ -66,10 +70,27 @@ namespace StrategyRTS
                     //Base destination, adding later 🦥 <--sloth emoji
                     //perhaps make a method called SetDestination(gameobject)
                     SetDestination<Base>();
-                    Move();
                 }
 
+                if (canMove)
+                {
+                    Move();
+                }
             }
+
+            
         }
+
+        private void Enter()
+        {
+            canMove = false;
+            
+            mineralSemaphore.WaitOne();
+            Thread.Sleep(1000);
+            canMove = true;
+            mineralSemaphore.Release();
+        }
+
+
     }
 }
