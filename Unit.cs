@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace StrategyRTS
 {
-    abstract class Unit : GameObject
+    public abstract class Unit : GameObject
     {
         public int gasConstructionCost;
         public int mineralConstructionCost;
@@ -35,7 +35,6 @@ namespace StrategyRTS
             //Move to the destination
             position += velocity * deltaTime * speed;
             Thread.Sleep(1);
-            Debug.WriteLine("workerPosition: " + position);
         }
 
         /// <summary>
@@ -44,6 +43,7 @@ namespace StrategyRTS
         /// <param name="type"></param>
         protected void SetDestination<T>()
         {
+            //Use ToList() to create a copy of gameObjects to prevent changes to a list being looped by another thread
             foreach (GameObject gameObject in GameWorld.GameObjectsProp.ToList())
             {
                 if (gameObject.GetType() == typeof(T))

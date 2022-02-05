@@ -11,15 +11,20 @@ namespace StrategyRTS
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private SpriteFont arial;
+        private static GameTime gameTime; //Get the value of gameTime without using Update(GameTime gameTime)
+        private static MouseState mouseState;
 
         private static List<GameObject> gameObjects = new List<GameObject>();
         private static List<GameObject> newGameObjects = new List<GameObject>();
         private static List<GameObject> removeGameObjects = new List<GameObject>();
 
-        private static GameTime gameTime; //Get the value of gameTime without using Update(GameTime gameTime)
+
+        private static Base myBase = new Base();
 
         public static List<GameObject> GameObjectsProp { get => gameObjects; set => gameObjects = value; }
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
+        public static Base MyBase { get => myBase; set => myBase = value; }
+        public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
 
         public GameWorld()
         {
@@ -35,8 +40,7 @@ namespace StrategyRTS
             Mineral myMineral = new Mineral();
             gameObjects.Add(myMineral);
 
-            Base myBase = new Base();
-            gameObjects.Add(myBase);
+            gameObjects.Add(MyBase);
 
             MineralWorker myWorker = new MineralWorker();
             gameObjects.Add(myWorker);
@@ -107,11 +111,29 @@ namespace StrategyRTS
                 gameObject.Draw(spriteBatch);
             }
 
-            //spriteBatch.DrawString(arial, "Minerals: " + 1, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Adds newly instantiated gameobjects to gameObject list
+        /// </summary>
+        /// <param name="gameObject">Gameobject to be added</param>
+        public static void Instantiate(GameObject gameObject)
+        {
+            newGameObjects.Add(gameObject);
+        }
+
+        /// <summary>
+        /// Removes gameObjects from gameObject list
+        /// </summary>
+        /// <param name="gameObject">GameObject to be removed</param>
+        public static void Destroy(GameObject gameObject)
+        {
+            removeGameObjects.Add(gameObject);
         }
     }
 }
