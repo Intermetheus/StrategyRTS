@@ -37,3 +37,4 @@ C:\Users\tk\source\repos\StrategyRTS\obj\Debug\netcoreapp3.1\StrategyRTS.pdb
 C:\Users\tk\source\repos\StrategyRTS\obj\Debug\netcoreapp3.1\StrategyRTS.genruntimeconfig.cache
 C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\base.xnb
 C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\worker.xnb
+C:\Users\tk\source\repos\StrategyRTS\bin\Debug\netcoreapp3.1\Content\mineral.xnb

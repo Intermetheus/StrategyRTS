@@ -5,9 +5,11 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/tk/source/repos/StrategyRTS/Content/base.png</File>
+    <File>C:/Users/tk/source/repos/StrategyRTS/Content/mineral.png</File>
     <File>C:/Users/tk/source/repos/StrategyRTS/Content/worker.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
