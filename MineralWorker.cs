@@ -34,12 +34,8 @@ namespace StrategyRTS
             {
                 //Extract()
                 if (!resourceBeingHeld)
-                {
-<<<<<<< HEAD
-                    
+                {                    
                     //Extract()
-=======
->>>>>>> tobias
                     resourceBeingHeld = true;
                     Enter();
                 }
@@ -74,14 +70,10 @@ namespace StrategyRTS
                     //perhaps make a method called SetDestination(gameobject)
                     SetDestination<Base>();
                 }
-<<<<<<< HEAD
-
                 if (canMove)
                 {
                     Move();
                 }
-=======
->>>>>>> tobias
             }
 
             
@@ -90,7 +82,7 @@ namespace StrategyRTS
         private void Enter()
         {
             canMove = false;
-            
+            mineralSemaphore.Release();
             mineralSemaphore.WaitOne();
             Thread.Sleep(1000);
             canMove = true;

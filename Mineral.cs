@@ -10,14 +10,10 @@ namespace StrategyRTS
 {
     class Mineral : ResourceDeposit
     {
-<<<<<<< HEAD
-
-=======
         public Mineral()
         {
             position = new Vector2(50, 50);
         }
->>>>>>> tobias
         public override void LoadContent(ContentManager content)
         {
             sprite = content.Load<Texture2D>("mineral");
