@@ -6,6 +6,8 @@ namespace StrategyRTS
 {
     abstract class ResourceDeposit : GameObject
     {
-
+        protected static int maxWorker = 2;
     }
+
+
 }

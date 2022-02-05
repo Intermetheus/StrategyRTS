@@ -18,6 +18,7 @@ namespace StrategyRTS
         protected Vector2 destination;
         protected float speed;
         protected bool resourceBeingHeld;
+        protected bool canMove;
 
         public void StartThread()
         {
