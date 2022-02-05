@@ -1,5 +1,1 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"C:/Users/tk/source/repos/StrategyRTS/Content/arial.spritefont","C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/Content/arial.xnb","LocalizedFontProcessor","SpriteFontContent",2496,988,0,327024
-"C:/Users/tk/source/repos/StrategyRTS/Content/base.png","C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/Content/base.xnb","TextureProcessor","Texture2DContent",531,16469,0,0106513
-"C:/Users/tk/source/repos/StrategyRTS/Content/mineral.png","C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/Content/mineral.xnb","TextureProcessor","Texture2DContent",769,16469,0,0026271
-"C:/Users/tk/source/repos/StrategyRTS/Content/worker.png","C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/Content/worker.xnb","TextureProcessor","Texture2DContent",396,4181,0,0016376

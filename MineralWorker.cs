@@ -32,10 +32,14 @@ namespace StrategyRTS
         {
             if (other is Mineral)
             {
+                //Extract()
                 if (!resourceBeingHeld)
                 {
+<<<<<<< HEAD
                     
                     //Extract()
+=======
+>>>>>>> tobias
                     resourceBeingHeld = true;
                     Enter();
                 }
@@ -46,7 +50,7 @@ namespace StrategyRTS
                 if (resourceBeingHeld)
                 {
                     resourceBeingHeld = false;
-
+                    GameWorld.MyBase.AddMinerals(1);
                 }
             }
         }
@@ -59,7 +63,6 @@ namespace StrategyRTS
                 {
                     //Because the worker does not have a resource
                     //Search the GameWorld for a Mineral Deposit
-                    //Use ToList() to create a copy of gameObjects to prevent changes to a list being looped by another thread
                     //Alternatively use a lock
                     SetDestination<Mineral>();
                     
@@ -71,11 +74,14 @@ namespace StrategyRTS
                     //perhaps make a method called SetDestination(gameobject)
                     SetDestination<Base>();
                 }
+<<<<<<< HEAD
 
                 if (canMove)
                 {
                     Move();
                 }
+=======
+>>>>>>> tobias
             }
 
             
