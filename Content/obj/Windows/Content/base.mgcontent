@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/jonat/OneDrive/Documents/GitHub/StrategyRTS/Content/base.png</SourceFile>
-  <SourceTime>2022-02-05T14:40:22.7638277+01:00</SourceTime>
-  <DestFile>C:/Users/jonat/OneDrive/Documents/GitHub/StrategyRTS/Content/bin/Windows/Content/base.xnb</DestFile>
-  <DestTime>2022-02-05T14:53:44.0721975+01:00</DestTime>
+  <SourceFile>C:/Users/tk/source/repos/StrategyRTS/Content/base.png</SourceFile>
+  <SourceTime>2022-02-03T14:03:33.985955+01:00</SourceTime>
+  <DestFile>C:/Users/tk/source/repos/StrategyRTS/Content/bin/Windows/Content/base.xnb</DestFile>
+  <DestTime>2022-02-05T15:41:28.3042287+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T18:17:54+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

@@ -4,10 +4,10 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/jonat/OneDrive/Documents/GitHub/StrategyRTS/Content/arial.spritefont</File>
-    <File>C:/Users/jonat/OneDrive/Documents/GitHub/StrategyRTS/Content/base.png</File>
-    <File>C:/Users/jonat/OneDrive/Documents/GitHub/StrategyRTS/Content/mineral.png</File>
-    <File>C:/Users/jonat/OneDrive/Documents/GitHub/StrategyRTS/Content/worker.png</File>
+    <File>C:/Users/tk/source/repos/StrategyRTS/Content/arial.spritefont</File>
+    <File>C:/Users/tk/source/repos/StrategyRTS/Content/base.png</File>
+    <File>C:/Users/tk/source/repos/StrategyRTS/Content/mineral.png</File>
+    <File>C:/Users/tk/source/repos/StrategyRTS/Content/worker.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
