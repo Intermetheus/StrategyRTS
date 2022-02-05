@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
@@ -19,10 +20,16 @@ namespace StrategyRTS
 
         public Base()
         {
+            scale = 1;
             baseThread = new Thread(Update);
             name = "playerBase";
             MineralAmount = 0;
             position = new Vector2(400, 400);
+        }
+
+        public void StartThread()
+        {
+            baseThread.Start();
         }
 
         public int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
@@ -39,9 +46,14 @@ namespace StrategyRTS
 
         public void Update()
         {
-            if (this.collisionBox.Contains(GameWorld.MouseStateProp.Position) && GameWorld.MouseStateProp.LeftButton == ButtonState.Pressed)
+            while (true)
             {
-                SpawnWorker(new MineralWorker());
+                if (CollisionBox().Contains(GameWorld.MouseStateProp.Position)
+                    //&& GameWorld.MouseStateProp.LeftButton == ButtonState.Pressed
+                    )
+                {
+                    SpawnWorker(new MineralWorker(workerSprites[0]));
+                }
             }
         }
 

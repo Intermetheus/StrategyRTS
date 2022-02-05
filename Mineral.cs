@@ -12,6 +12,7 @@ namespace StrategyRTS
     {
         public Mineral()
         {
+            scale = 1;
             position = new Vector2(50, 50);
         }
         public override void LoadContent(ContentManager content)

@@ -42,8 +42,11 @@ namespace StrategyRTS
 
             gameObjects.Add(MyBase);
 
-            MineralWorker myWorker = new MineralWorker();
-            gameObjects.Add(myWorker);
+            for (int i = 0; i < 5; i++)
+            {
+                gameObjects.Add(new MineralWorker());
+            }
+
             base.Initialize();
         }
 
@@ -62,13 +65,11 @@ namespace StrategyRTS
 
         protected override void Update(GameTime gameTime)
         {
-
-
-
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             GameTimeProp = gameTime;
 
+            mouseState = Mouse.GetState();
 
             if (!threadsStarted)
             {
@@ -80,6 +81,7 @@ namespace StrategyRTS
                         gameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, gameObject, null);
                     }
                 }
+                myBase.StartThread();
                 threadsStarted = true;
             }
 

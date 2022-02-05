@@ -12,15 +12,33 @@ namespace StrategyRTS
     class MineralWorker : Unit
     {
         static Semaphore mineralSemaphore = new Semaphore(0,3);
-        
+
+        private bool enterMine;
+        private Random random;
 
         public MineralWorker()
         {
+            StartValues();
+        }
+        /// <summary>
+        /// Used for instantiating a Worker
+        /// </summary>
+        /// <param name="sprite"></param>
+        public MineralWorker(Texture2D sprite)
+        {
+            this.sprite = sprite;
+            StartValues();
+        }
+
+        private void StartValues()
+        {
+            random = new Random();
             workerThread = new Thread(Behaviour);
-            Position = new Vector2(400, 400);
+            Position = new Vector2(400+random.Next(0,50), 400);
             resourceBeingHeld = false;
-            speed = 250;
+            speed = 200;
             canMove = true;
+            enterMine = false;
         }
 
         public override void LoadContent(ContentManager content)
@@ -32,12 +50,13 @@ namespace StrategyRTS
         {
             if (other is Mineral)
             {
+
                 //Extract()
                 if (!resourceBeingHeld)
                 {                    
                     //Extract()
                     resourceBeingHeld = true;
-                    Enter();
+                    enterMine = true;
                 }
             }
             if (other is Base)
@@ -57,36 +76,37 @@ namespace StrategyRTS
             {
                 if (!resourceBeingHeld)
                 {
-                    //Because the worker does not have a resource
-                    //Search the GameWorld for a Mineral Deposit
-                    //Alternatively use a lock
                     SetDestination<Mineral>();
                     
                 }
 
                 if (resourceBeingHeld)
                 {
-                    //Base destination, adding later 🦥 <--sloth emoji
-                    //perhaps make a method called SetDestination(gameobject)
                     SetDestination<Base>();
                 }
+
                 if (canMove)
                 {
                     Move();
                 }
-            }
 
-            
+                if (enterMine)
+                {
+                    enterMine = false;
+                    Enter();
+                }
+            }
         }
 
         private void Enter()
         {
             canMove = false;
+            scale = 0;
             mineralSemaphore.Release();
             mineralSemaphore.WaitOne();
             Thread.Sleep(1000);
+            scale = 1;
             canMove = true;
-            mineralSemaphore.Release();
         }
 
 

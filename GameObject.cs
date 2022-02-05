@@ -14,6 +14,7 @@ namespace StrategyRTS
         protected Texture2D sprite;
         protected float layerDepth;
         protected Rectangle collisionBox;
+        protected float scale;
 
         public Vector2 Position { get => position; set => position = value; }
 
@@ -21,7 +22,7 @@ namespace StrategyRTS
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(sprite, position, null, Color.White, 0, origin, 1, SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(sprite, position, null, Color.White, 0, origin, scale, SpriteEffects.None, layerDepth);
         }
 
         public void CheckCollision(GameObject other)
