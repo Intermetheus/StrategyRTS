@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace StrategyRTS
 {
@@ -17,7 +18,6 @@ namespace StrategyRTS
         private static List<GameObject> gameObjects = new List<GameObject>();
         private static List<GameObject> newGameObjects = new List<GameObject>();
         private static List<GameObject> removeGameObjects = new List<GameObject>();
-
 
         private static Base myBase = new Base();
 
@@ -36,7 +36,7 @@ namespace StrategyRTS
         }
 
         protected override void Initialize()
-        {
+        {            
             Mineral myMineral = new Mineral();
             gameObjects.Add(myMineral);
 
@@ -59,6 +59,7 @@ namespace StrategyRTS
             {
                 gameObject.LoadContent(Content);
             }
+            new ConstructWorkerButton(spriteBatch, Content);
         }
 
         private bool threadsStarted = false; //starts threads of workers created in initialize()
@@ -109,6 +110,7 @@ namespace StrategyRTS
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            ConstructWorkerButton.drawMutex.WaitOne();
             spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
             foreach (GameObject gameObject in gameObjects)
@@ -119,6 +121,7 @@ namespace StrategyRTS
             spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
             spriteBatch.End();
+            ConstructWorkerButton.drawMutex.ReleaseMutex();
 
             base.Draw(gameTime);
         }
