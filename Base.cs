@@ -15,6 +15,7 @@ namespace StrategyRTS
         private Thread baseThread;
         private static readonly object lockObject = new object();
         private int mineralAmount;
+        private int gasAmount;
         private string name;
         private Texture2D[] workerSprites;
 
@@ -22,7 +23,7 @@ namespace StrategyRTS
         {
             scale = 1;
             baseThread = new Thread(Update);
-            name = "playerBase";
+            Name = "playerBase";
             MineralAmount = 0;
             position = new Vector2(400, 400);
         }
@@ -33,27 +34,27 @@ namespace StrategyRTS
         }
 
         public int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
+        public string Name { get => name; set => name = value; }
+        public int GasAmount { get => gasAmount; set => gasAmount = value; }
 
         public override void LoadContent(ContentManager content)
         {
             workerSprites = new Texture2D[2];
-            workerSprites[0] = content.Load<Texture2D>("worker");
-            workerSprites[1] = content.Load<Texture2D>("worker");
+            workerSprites[0] = content.Load<Texture2D>("mineralWorker");
+            workerSprites[1] = content.Load<Texture2D>("gasWorker");
 
 
             sprite = content.Load<Texture2D>("base");
         }
 
+        /// <summary>
+        /// Base Thread
+        /// </summary>
         public void Update()
         {
             while (true)
             {
-                if (CollisionBox().Contains(GameWorld.MouseStateProp.Position)
-                    //&& GameWorld.MouseStateProp.LeftButton == ButtonState.Pressed
-                    )
-                {
-                    SpawnWorker(new MineralWorker(workerSprites[0]));
-                }
+                
             }
         }
 
@@ -66,6 +67,14 @@ namespace StrategyRTS
             lock(lockObject)
             {
                 mineralAmount += amount;
+            }
+        }
+
+        public void AddGas(int amount)
+        {
+            lock (lockObject)
+            {
+                GasAmount += amount;
             }
         }
 

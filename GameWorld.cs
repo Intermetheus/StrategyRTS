@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace StrategyRTS
@@ -25,6 +26,7 @@ namespace StrategyRTS
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
         public static Base MyBase { get => myBase; set => myBase = value; }
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
+        public SpriteBatch SpriteBatchProp { get => spriteBatch; set => spriteBatch = value; }
 
         public GameWorld()
         {
@@ -39,12 +41,20 @@ namespace StrategyRTS
         {
             Mineral myMineral = new Mineral();
             gameObjects.Add(myMineral);
+            
+            Gas myGas = new Gas();
+            gameObjects.Add(myGas);
 
             gameObjects.Add(MyBase);
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 2; i++)
             {
-                gameObjects.Add(new MineralWorker());
+                gameObjects.Add(new MineralWorker(i));
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                gameObjects.Add(new TimedGasWorker(i));
             }
 
             base.Initialize();
@@ -53,7 +63,7 @@ namespace StrategyRTS
         protected override void LoadContent()
         {
             arial = Content.Load<SpriteFont>("arial");
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteBatchProp = new SpriteBatch(GraphicsDevice);
 
             foreach (GameObject gameObject in gameObjects)
             {
@@ -109,16 +119,31 @@ namespace StrategyRTS
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin(SpriteSortMode.FrontToBack);
+            SpriteBatchProp.Begin(SpriteSortMode.FrontToBack);
 
             foreach (GameObject gameObject in gameObjects)
             {
-                gameObject.Draw(spriteBatch);
+                gameObject.Draw(SpriteBatchProp);
             }
 
-            spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            foreach (GameObject gameObject in gameObjects)
+            {
+                if (gameObject is Unit)
+                {
+                    Unit mObject = (Unit)gameObject;
+                    SpriteBatchProp.DrawString(arial, mObject.Id.ToString(), new Vector2(mObject.Position.X, mObject.Position.Y), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+                if (gameObject is Base)
+                {
+                    Base bObject = (Base)gameObject;
+                    SpriteBatchProp.DrawString(arial, bObject.Name, new Vector2(bObject.Position.X -20, bObject.Position.Y -20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+            }
 
-            spriteBatch.End();
+            SpriteBatchProp.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20, 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            SpriteBatchProp.DrawString(arial, "Gas: " + MyBase.GasAmount, new Vector2(180, 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+
+            SpriteBatchProp.End();
 
             base.Draw(gameTime);
         }

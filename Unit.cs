@@ -19,8 +19,14 @@ namespace StrategyRTS
         protected float speed;
         protected bool resourceBeingHeld;
         protected bool canMove;
+        protected int id;
 
-        public void StartThread()
+        public int Id { get => id; set => id = value; }
+
+
+        public bool ResourceBeingHeld { get => resourceBeingHeld; set => resourceBeingHeld = value; }
+
+        public virtual void StartThread()
         {
             workerThread.Start();
         }

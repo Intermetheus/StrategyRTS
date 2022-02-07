@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,10 +12,11 @@ namespace StrategyRTS
 {
     class MineralWorker : Unit
     {
-        static Semaphore mineralSemaphore = new Semaphore(0,3);
-
         private bool enterMine;
         private Random random;
+        private Mineral enteredMineral;
+
+        public Mineral EnteredMineral { get => enteredMineral; set => enteredMineral = value; }
 
         public MineralWorker()
         {
@@ -30,41 +32,49 @@ namespace StrategyRTS
             StartValues();
         }
 
+        public MineralWorker(int id)
+        {
+            this.id = id;
+            StartValues();
+        }
+
         private void StartValues()
         {
             random = new Random();
             workerThread = new Thread(Behaviour);
             Position = new Vector2(400+random.Next(0,50), 400);
-            resourceBeingHeld = false;
+            ResourceBeingHeld = false;
             speed = 200;
             canMove = true;
             enterMine = false;
+            scale = 1;
         }
 
         public override void LoadContent(ContentManager content)
         {
-            sprite = content.Load<Texture2D>("worker");
+            sprite = content.Load<Texture2D>("mineralWorker");
         }
 
         public override void OnCollision(GameObject other)
         {
             if (other is Mineral)
             {
-
                 //Extract()
-                if (!resourceBeingHeld)
-                {                    
-                    //Extract()
-                    resourceBeingHeld = true;
-                    enterMine = true;
+                if (!ResourceBeingHeld)
+                {
+                    EnteredMineral = (Mineral)other;
+                    if (canMove)
+                    {
+                        enterMine = true;
+                    }
                 }
             }
             if (other is Base)
             {
                 //Deposit
-                if (resourceBeingHeld)
+                if (ResourceBeingHeld)
                 {
-                    resourceBeingHeld = false;
+                    ResourceBeingHeld = false;
                     GameWorld.MyBase.AddMinerals(1);
                 }
             }
@@ -74,13 +84,12 @@ namespace StrategyRTS
         {
             while(true)
             {
-                if (!resourceBeingHeld)
+                if (!ResourceBeingHeld)
                 {
                     SetDestination<Mineral>();
-                    
                 }
 
-                if (resourceBeingHeld)
+                if (ResourceBeingHeld)
                 {
                     SetDestination<Base>();
                 }
@@ -90,7 +99,7 @@ namespace StrategyRTS
                     Move();
                 }
 
-                if (enterMine)
+                if (enterMine && enteredMineral != null)
                 {
                     enterMine = false;
                     Enter();
@@ -101,14 +110,14 @@ namespace StrategyRTS
         private void Enter()
         {
             canMove = false;
+            EnteredMineral.MineralSemaphore.WaitOne();
             scale = 0;
-            mineralSemaphore.Release();
-            mineralSemaphore.WaitOne();
-            Thread.Sleep(1000);
+            Thread.Sleep(10000);
+            EnteredMineral.MineralSemaphore.Release();
+            ResourceBeingHeld = true;
+            EnteredMineral = null;
             scale = 1;
             canMove = true;
         }
-
-
     }
 }
