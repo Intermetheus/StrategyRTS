@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
 namespace StrategyRTS
 {
@@ -19,14 +19,12 @@ namespace StrategyRTS
         private static List<GameObject> newGameObjects = new List<GameObject>();
         private static List<GameObject> removeGameObjects = new List<GameObject>();
 
-
         private static Base myBase = new Base();
 
         public static List<GameObject> GameObjectsProp { get => gameObjects; set => gameObjects = value; }
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
         public static Base MyBase { get => myBase; set => myBase = value; }
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
-        public SpriteBatch SpriteBatchProp { get => spriteBatch; set => spriteBatch = value; }
 
         public GameWorld()
         {
@@ -38,23 +36,15 @@ namespace StrategyRTS
         }
 
         protected override void Initialize()
-        {
+        {            
             Mineral myMineral = new Mineral();
             gameObjects.Add(myMineral);
-            
-            Gas myGas = new Gas();
-            gameObjects.Add(myGas);
 
             gameObjects.Add(MyBase);
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 5; i++)
             {
-                gameObjects.Add(new MineralWorker(i));
-            }
-
-            for (int i = 0; i < 2; i++)
-            {
-                gameObjects.Add(new TimedGasWorker(i));
+                gameObjects.Add(new MineralWorker());
             }
 
             base.Initialize();
@@ -63,12 +53,13 @@ namespace StrategyRTS
         protected override void LoadContent()
         {
             arial = Content.Load<SpriteFont>("arial");
-            SpriteBatchProp = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             foreach (GameObject gameObject in gameObjects)
             {
                 gameObject.LoadContent(Content);
             }
+            new ConstructWorkerButton(spriteBatch, Content);
         }
 
         private bool threadsStarted = false; //starts threads of workers created in initialize()
@@ -119,31 +110,18 @@ namespace StrategyRTS
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            SpriteBatchProp.Begin(SpriteSortMode.FrontToBack);
+            ConstructWorkerButton.drawMutex.WaitOne();
+            spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
             foreach (GameObject gameObject in gameObjects)
             {
-                gameObject.Draw(SpriteBatchProp);
+                gameObject.Draw(spriteBatch);
             }
 
-            foreach (GameObject gameObject in gameObjects)
-            {
-                if (gameObject is Unit)
-                {
-                    Unit mObject = (Unit)gameObject;
-                    SpriteBatchProp.DrawString(arial, mObject.Id.ToString(), new Vector2(mObject.Position.X, mObject.Position.Y), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
-                }
-                if (gameObject is Base)
-                {
-                    Base bObject = (Base)gameObject;
-                    SpriteBatchProp.DrawString(arial, bObject.Name, new Vector2(bObject.Position.X -20, bObject.Position.Y -20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
-                }
-            }
+            spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
-            SpriteBatchProp.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20, 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
-            SpriteBatchProp.DrawString(arial, "Gas: " + MyBase.GasAmount, new Vector2(180, 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
-
-            SpriteBatchProp.End();
+            spriteBatch.End();
+            ConstructWorkerButton.drawMutex.ReleaseMutex();
 
             base.Draw(gameTime);
         }
