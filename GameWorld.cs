@@ -36,15 +36,22 @@ namespace StrategyRTS
         }
 
         protected override void Initialize()
-        {            
+        {
             Mineral myMineral = new Mineral();
+            Gas myGas = new Gas();
             gameObjects.Add(myMineral);
+            gameObjects.Add(myGas);
 
             gameObjects.Add(MyBase);
 
             for (int i = 0; i < 5; i++)
             {
                 gameObjects.Add(new MineralWorker());
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                gameObjects.Add(new TimedGasWorker());
             }
 
             base.Initialize();
