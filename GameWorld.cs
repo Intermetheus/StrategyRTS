@@ -127,7 +127,24 @@ namespace StrategyRTS
 
             spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
+#if DEBUG
+            //Draws numbers on the workers to identify them
+            foreach (GameObject gameObject in gameObjects)
+            {
+                if (gameObject is Unit)
+                {
+                    Unit mObject = (Unit)gameObject;
+                    spriteBatch.DrawString(arial, mObject.Id.ToString(), new Vector2(mObject.Position.X, mObject.Position.Y), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+                if (gameObject is Base)
+                {
+                    Base bObject = (Base)gameObject;
+                    spriteBatch.DrawString(arial, bObject.Name, new Vector2(bObject.Position.X - 20, bObject.Position.Y - 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+            }
+#endif
             spriteBatch.End();
+
             ConstructWorkerButton.drawMutex.ReleaseMutex();
 
             base.Draw(gameTime);
