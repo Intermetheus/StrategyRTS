@@ -22,8 +22,9 @@ namespace StrategyRTS
         {
             StartValues();
         }
+
         /// <summary>
-        /// Used for instantiating a Worker
+        /// Used for instantiating a Worker from the Base building
         /// </summary>
         /// <param name="sprite"></param>
         public MineralWorker(Texture2D sprite)
@@ -32,6 +33,10 @@ namespace StrategyRTS
             StartValues();
         }
 
+        /// <summary>
+        /// Instantiate a mineral worker with a non-unique id(used to give them names)
+        /// </summary>
+        /// <param name="id"></param>
         public MineralWorker(int id)
         {
             this.id = id;
@@ -59,7 +64,7 @@ namespace StrategyRTS
         {
             if (other is Mineral)
             {
-                //Extract()
+                //Extract
                 if (!ResourceBeingHeld)
                 {
                     EnteredMineral = (Mineral)other;
@@ -106,7 +111,9 @@ namespace StrategyRTS
                 }
             }
         }
-
+        /// <summary>
+        /// Enter a mine
+        /// </summary>
         private void Enter()
         {
             canMove = false;

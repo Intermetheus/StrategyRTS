@@ -70,7 +70,7 @@ namespace StrategyRTS
         {
             if (other is Gas)
             {
-                //Extract()
+                //Extract
                 if (!ResourceBeingHeld)
                 {
                     EnteredGas = (Gas)other;
@@ -123,6 +123,9 @@ namespace StrategyRTS
             }
         }
 
+        /// <summary>
+        /// Enter a mine
+        /// </summary>
         private void Enter()
         {
             canMove = false;

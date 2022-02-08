@@ -20,7 +20,6 @@ namespace StrategyRTS
             position = new Vector2(50, 50);
         }
 
-
         public override void LoadContent(ContentManager content)
         {
             sprite = content.Load<Texture2D>("mineral");
