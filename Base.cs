@@ -14,8 +14,8 @@ namespace StrategyRTS
     {
         private Thread baseThread;
         private static readonly object lockObject = new object();
-        private int mineralAmount;
-        private int gasAmount;
+        private static int mineralAmount;
+        private static int gasAmount;
         private string name;
         private Texture2D[] workerSprites;
 
@@ -33,9 +33,9 @@ namespace StrategyRTS
             baseThread.Start();
         }
 
-        public int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
+        public static int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
         public string Name { get => name; set => name = value; }
-        public int GasAmount { get => gasAmount; set => gasAmount = value; }
+        public static int GasAmount { get => gasAmount; set => gasAmount = value; }
 
         public override void LoadContent(ContentManager content)
         {

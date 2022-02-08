@@ -11,7 +11,7 @@ namespace StrategyRTS
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private SpriteFont arial;
+        private static SpriteFont arial;
         private static GameTime gameTime; //Get the value of gameTime without using Update(GameTime gameTime)
         private static MouseState mouseState;
 
@@ -19,12 +19,15 @@ namespace StrategyRTS
         private static List<GameObject> newGameObjects = new List<GameObject>();
         private static List<GameObject> removeGameObjects = new List<GameObject>();
 
+        private static List<UI> UIObjects = new List<UI>();
+
         private static Base myBase = new Base();
 
         public static List<GameObject> GameObjectsProp { get => gameObjects; set => gameObjects = value; }
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
         public static Base MyBase { get => myBase; set => myBase = value; }
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
+        public static SpriteFont Arial { get => arial; set => arial = value; }
 
         public GameWorld()
         {
@@ -54,19 +57,26 @@ namespace StrategyRTS
                 gameObjects.Add(new TimedGasWorker());
             }
 
+            UIObjects.Add(new ConstructWorkerButton());
+            UIObjects.Add(new ResourceCounter());
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            arial = Content.Load<SpriteFont>("arial");
+            Arial = Content.Load<SpriteFont>("arial");
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             foreach (GameObject gameObject in gameObjects)
             {
                 gameObject.LoadContent(Content);
             }
-            new ConstructWorkerButton(spriteBatch, Content);
+
+            foreach (UI UIObject in UIObjects)
+            {
+                UIObject.LoadContent(Content);
+            }
         }
 
         private bool threadsStarted = false; //starts threads of workers created in initialize()
@@ -125,7 +135,12 @@ namespace StrategyRTS
                 gameObject.Draw(spriteBatch);
             }
 
-            spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            foreach (UI UIObject in UIObjects)
+            {
+                UIObject.Draw(spriteBatch);
+            }
+
+            //spriteBatch.DrawString(Arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
 #if DEBUG
             //Draws numbers on the workers to identify them
@@ -134,12 +149,12 @@ namespace StrategyRTS
                 if (gameObject is Unit)
                 {
                     Unit mObject = (Unit)gameObject;
-                    spriteBatch.DrawString(arial, mObject.Id.ToString(), new Vector2(mObject.Position.X, mObject.Position.Y), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                    spriteBatch.DrawString(Arial, mObject.Id.ToString(), new Vector2(mObject.Position.X, mObject.Position.Y), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
                 }
                 if (gameObject is Base)
                 {
                     Base bObject = (Base)gameObject;
-                    spriteBatch.DrawString(arial, bObject.Name, new Vector2(bObject.Position.X - 20, bObject.Position.Y - 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                    spriteBatch.DrawString(Arial, bObject.Name, new Vector2(bObject.Position.X - 20, bObject.Position.Y - 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
                 }
             }
 #endif
