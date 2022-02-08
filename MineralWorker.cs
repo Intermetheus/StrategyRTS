@@ -47,6 +47,7 @@ namespace StrategyRTS
         {
             random = new Random();
             workerThread = new Thread(Behaviour);
+            workerThread.IsBackground = true;
             Position = new Vector2(400+random.Next(0,50), 400);
             ResourceBeingHeld = false;
             speed = 200;
@@ -119,7 +120,7 @@ namespace StrategyRTS
             canMove = false;
             EnteredMineral.MineralSemaphore.WaitOne();
             scale = 0;
-            Thread.Sleep(10000);
+            Thread.Sleep(3000);
             EnteredMineral.MineralSemaphore.Release();
             ResourceBeingHeld = true;
             EnteredMineral = null;

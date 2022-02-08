@@ -10,7 +10,7 @@ namespace StrategyRTS
 {
     class Mineral : ResourceDeposit
     {
-        private Semaphore mineralSemaphore = new Semaphore(2, 2);
+        private Semaphore mineralSemaphore = new Semaphore(3, 3);
 
         public  Semaphore MineralSemaphore { get => mineralSemaphore; set => mineralSemaphore = value; }
 

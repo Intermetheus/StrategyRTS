@@ -10,7 +10,7 @@ namespace StrategyRTS
 {
     class Gas : ResourceDeposit
     {
-        private Semaphore gasSemaphore = new Semaphore(2, 2);
+        private Semaphore gasSemaphore = new Semaphore(5, 5);
 
         public Semaphore GasSemaphore { get => gasSemaphore; set => gasSemaphore = value; }
 

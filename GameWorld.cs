@@ -23,11 +23,14 @@ namespace StrategyRTS
 
         private static Base myBase = new Base();
 
+        private static ButtonState leftMouseButton = ButtonState.Released;   // Tracks the current state of the left mouse button
+
         public static List<GameObject> GameObjectsProp { get => gameObjects; set => gameObjects = value; }
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
         public static Base MyBase { get => myBase; set => myBase = value; }
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
         public static SpriteFont Arial { get => arial; set => arial = value; }
+        public static List<GameObject> NewGameObjects { get => newGameObjects; set => newGameObjects = value; }
 
         public GameWorld()
         {
@@ -42,19 +45,19 @@ namespace StrategyRTS
         {
             Mineral myMineral = new Mineral();
             Gas myGas = new Gas();
-            gameObjects.Add(myMineral);
-            gameObjects.Add(myGas);
+            newGameObjects.Add(myMineral);
+            newGameObjects.Add(myGas);
 
-            gameObjects.Add(MyBase);
+            newGameObjects.Add(MyBase);
 
             for (int i = 0; i < 5; i++)
             {
-                gameObjects.Add(new MineralWorker());
+                newGameObjects.Add(new MineralWorker());
             }
 
             for (int i = 0; i < 5; i++)
             {
-                gameObjects.Add(new TimedGasWorker());
+                newGameObjects.Add(new TimedGasWorker());
             }
 
             UIObjects.Add(new ConstructWorkerButton());
@@ -79,32 +82,53 @@ namespace StrategyRTS
             }
         }
 
-        private bool threadsStarted = false; //starts threads of workers created in initialize()
+        // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA private bool threadsStarted = false; //starts threads of workers created in initialize()
+        // HVAD FUYCK ER DIT PROBLEM!!!!
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
             GameTimeProp = gameTime;
 
             mouseState = Mouse.GetState();
 
-            if (!threadsStarted)
+            //if (!threadsStarted)
+            //{
+            //    //foreach (GameObject gameObject in gameObjects)
+            //    //{
+            //    //    if (gameObject is Unit)
+            //    //    {
+            //    //        //Call StartThread in Unit, even though we are accessing it from GameObject type
+            //    //        gameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, gameObject, null);
+            //    //    }
+            //    //}
+            //    myBase.StartThread();
+            //    threadsStarted = true;
+            //}
+
+
+            gameObjects.AddRange(NewGameObjects);
+
+
+            foreach (GameObject newGameObject in NewGameObjects)
             {
-                foreach (GameObject gameObject in gameObjects)
+                newGameObject.LoadContent(Content);
+
+                if (newGameObject is Unit)
                 {
-                    if (gameObject is Unit)
-                    {
-                        //Call StartThread in Unit, even though we are accessing it from GameObject type
-                        gameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, gameObject, null);
-                    }
+                    //Call StartThread in Unit, even though we are accessing it from GameObject type
+                    newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
                 }
-                myBase.StartThread();
-                threadsStarted = true;
+                if (newGameObject is Base)
+                {
+                    //Call StartThread in Unit, even though we are accessing it from GameObject type
+                    newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
+                }
             }
 
-            gameObjects.AddRange(newGameObjects);
-            newGameObjects.Clear();
+            NewGameObjects.Clear();
 
             foreach (GameObject gameObject in removeGameObjects)
             {
@@ -118,6 +142,11 @@ namespace StrategyRTS
                 {
                     gameObject.CheckCollision(other);
                 }
+            }
+
+            foreach (UI UIObject in UIObjects)
+            {
+                UIObject.Update(gameTime);
             }
 
             base.Update(gameTime);
@@ -171,7 +200,7 @@ namespace StrategyRTS
         /// <param name="gameObject">Gameobject to be added</param>
         public static void Instantiate(GameObject gameObject)
         {
-            newGameObjects.Add(gameObject);
+            NewGameObjects.Add(gameObject);
         }
 
         /// <summary>
@@ -181,6 +210,24 @@ namespace StrategyRTS
         public static void Destroy(GameObject gameObject)
         {
             removeGameObjects.Add(gameObject);
+        }
+
+        /// <summary>
+        /// Registers when the left mouse button is being released
+        /// </summary>
+        /// <returns></returns>
+        public static bool LeftMouseButtonReleased()
+        {
+            if (leftMouseButton == ButtonState.Pressed && Mouse.GetState().LeftButton == ButtonState.Released)
+            {
+                leftMouseButton = Mouse.GetState().LeftButton;
+                return true;
+            }
+            else
+            {
+                leftMouseButton = Mouse.GetState().LeftButton;
+                return false;
+            }
         }
     }
 }

@@ -15,6 +15,10 @@ namespace StrategyRTS
 
         public abstract void LoadContent(ContentManager content);
         public abstract void Draw(SpriteBatch spriteBatch);
+        public virtual void Update(GameTime gameTime)
+        {
+
+        }
 
         //protected Thread UIThread;
         //protected bool threadAlive = true;

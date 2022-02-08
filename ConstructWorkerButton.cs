@@ -12,7 +12,7 @@ namespace StrategyRTS
     {
         private Texture2D sprite;
         private Rectangle bounds;
-        private bool isHovering;
+        public bool isHovering;
         public static Mutex drawMutex = new Mutex();
 
         public ConstructWorkerButton()
@@ -36,6 +36,14 @@ namespace StrategyRTS
             spriteBatch.Draw(sprite, position, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            if (Base.MineralAmount >= 5 && bounds.Contains(GameWorld.MouseStateProp.Position) && GameWorld.LeftMouseButtonReleased())
+            {
+                GameWorld.MyBase.RemoveMinerals(1);
+                GameWorld.NewGameObjects.Add(new TimedGasWorker());
+            }
+        }
 
 
         //public override void ThreadMethod()

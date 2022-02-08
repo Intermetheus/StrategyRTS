@@ -46,6 +46,7 @@ namespace StrategyRTS
             isAlive = true;
             random = new Random();
             workerThread = new Thread(Behaviour);
+            workerThread.IsBackground = true;
             Position = new Vector2(400 + random.Next(0, 50), 400);
             ResourceBeingHeld = false;
             speed = 200;
@@ -131,7 +132,7 @@ namespace StrategyRTS
             canMove = false;
             enteredGas.GasSemaphore.WaitOne();
             scale = 0;
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
             enteredGas.GasSemaphore.Release();
             ResourceBeingHeld = true;
             enteredGas = null;

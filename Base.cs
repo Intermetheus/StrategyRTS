@@ -22,7 +22,8 @@ namespace StrategyRTS
         public Base()
         {
             scale = 1;
-            baseThread = new Thread(Update);
+            baseThread = new Thread(BaseThreadUpdate);
+            baseThread.IsBackground = true;
             Name = "playerBase";
             MineralAmount = 0;
             position = new Vector2(400, 400);
@@ -50,11 +51,15 @@ namespace StrategyRTS
         /// <summary>
         /// Base Thread
         /// </summary>
-        public void Update()
+        public void BaseThreadUpdate()
         {
             while (true)
             {
-                
+                if (gasAmount >= 10)
+                {
+                    RemoveGas(1);
+                    GameWorld.NewGameObjects.Add(new MineralWorker());
+                }
             }
         }
 
@@ -75,6 +80,22 @@ namespace StrategyRTS
             lock (lockObject)
             {
                 GasAmount += amount;
+            }
+        }
+
+        public void RemoveMinerals(int amount)
+        {
+            lock (lockObject)
+            {
+                mineralAmount -= amount;
+            }
+        }
+
+        public void RemoveGas(int amount)
+        {
+            lock (lockObject)
+            {
+                GasAmount -= amount;
             }
         }
 
