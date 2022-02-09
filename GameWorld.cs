@@ -197,7 +197,7 @@ namespace StrategyRTS
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            ConstructWorkerButton.drawMutex.WaitOne();
+            //ConstructWorkerButton.drawMutex.WaitOne();
             spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
             foreach (GameObject gameObject in gameObjects)
@@ -229,7 +229,7 @@ namespace StrategyRTS
 #endif
             spriteBatch.End();
 
-            ConstructWorkerButton.drawMutex.ReleaseMutex();
+            //ConstructWorkerButton.drawMutex.ReleaseMutex();
 
             base.Draw(gameTime);
         }

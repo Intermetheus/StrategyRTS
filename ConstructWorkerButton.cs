@@ -8,17 +8,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// UI element, which can be clicked
+    /// </summary>
     class ConstructWorkerButton : UI
     {
         private Texture2D sprite;
         private Rectangle bounds;
         private int gasWorkerCost = 1;
-        public bool isHovering;
-        public static Mutex drawMutex = new Mutex();        
+        //public static Mutex drawMutex = new Mutex();        
 
         public ConstructWorkerButton()
         {
-            //sprite = content.Load<Texture2D>("Build_Button");
             position = new Vector2(1600 / 2 - 400, 900 - 150);
             //base.spriteBatch = spriteBatch;
             //UIThread = new Thread(ThreadMethod);
@@ -26,6 +27,10 @@ namespace StrategyRTS
             //Start();
         }
 
+        /// <summary>
+        /// Loads button sprite and creates rectangle based on sprite size, for clicking button
+        /// </summary>
+        /// <param name="content"></param>
         public override void LoadContent(ContentManager content)
         {
             sprite = content.Load<Texture2D>("Build_Button");

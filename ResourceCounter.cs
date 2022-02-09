@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// UI element, which displays resource amounts
+    /// </summary>
     class ResourceCounter : UI
     {
         private string resourceAmount;

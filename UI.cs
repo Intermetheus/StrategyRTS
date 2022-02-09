@@ -8,10 +8,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// Manages UI elements
+    /// </summary>
     abstract class UI
     {
         protected Vector2 position;
-        protected SpriteBatch spriteBatch;
+        //protected SpriteBatch spriteBatch;
 
         public abstract void LoadContent(ContentManager content);
         public abstract void Draw(SpriteBatch spriteBatch);
