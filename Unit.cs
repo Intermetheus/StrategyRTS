@@ -9,6 +9,9 @@ using System.Threading;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// Abstract class for holding Methods and fields used in Units
+    /// </summary>
     public abstract class Unit : GameObject
     {
         public int gasConstructionCost;
@@ -21,16 +24,27 @@ namespace StrategyRTS
         protected bool canMove;
         protected int id;
 
+        /// <summary>
+        /// Number used to identify different Units during debug
+        /// </summary>
         public int Id { get => id; set => id = value; }
 
-
+        /// <summary>
+        /// Bool that governs which behaviour a Unit should follow.
+        /// </summary>
         public bool ResourceBeingHeld { get => resourceBeingHeld; set => resourceBeingHeld = value; }
 
+        /// <summary>
+        /// Starts the workerThread
+        /// </summary>
         public virtual void StartThread()
         {
             workerThread.Start();
         }
 
+        /// <summary>
+        /// Moves the unit based on a direction, speed velocity and gameTime.
+        /// </summary>
         public void Move()
         {
             float deltaTime = (float)GameWorld.GameTimeProp.ElapsedGameTime.TotalSeconds;
@@ -61,22 +75,6 @@ namespace StrategyRTS
                     }
                 }
             }
-            
-        }
-
-        public void Extract()
-        {
-
-        }
-
-        public void Deposit()
-        {
-
-        }
-
-        public void ConstructUnit()
-        {
-
         }
     }
 }

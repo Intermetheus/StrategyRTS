@@ -10,6 +10,9 @@ using System.Threading;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// Base Class that stores resources and has a Thread
+    /// </summary>
     public class Base : GameObject
     {
         private Thread baseThread;
@@ -19,6 +22,25 @@ namespace StrategyRTS
         private string name;
         private Texture2D[] workerSprites;
 
+        /// <summary>
+        /// Allows easier access to the mineralAmount
+        /// </summary>
+        public static int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
+
+        /// <summary>
+        /// Allows easier access to the gasAmount
+        /// </summary>
+        public static int GasAmount { get => gasAmount; set => gasAmount = value; }
+
+        /// <summary>
+        /// Allows easier access to the Name string
+        /// </summary>
+        public string Name { get => name; set => name = value; }
+
+
+        /// <summary>
+        /// Sets the initial values of the Base, and creates its Thread.
+        /// </summary>
         public Base()
         {
             scale = 1;
@@ -30,15 +52,13 @@ namespace StrategyRTS
             position = new Vector2(400, 400);
         }
 
+        /// <summary>
+        /// Starts the Thread
+        /// </summary>
         public void StartThread()
         {
             baseThread.Start();
         }
-
-        public static int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
-        public string Name { get => name; set => name = value; }
-        public static int GasAmount { get => gasAmount; set => gasAmount = value; }
-
         public override void LoadContent(ContentManager content)
         {
             workerSprites = new Texture2D[2];
@@ -50,7 +70,7 @@ namespace StrategyRTS
         }
 
         /// <summary>
-        /// Base Thread
+        /// Base Thread. Creates a new MineralWorker if the player has more than 10 gas.
         /// </summary>
         public void BaseThreadUpdate()
         {
@@ -65,9 +85,9 @@ namespace StrategyRTS
         }
 
         /// <summary>
-        /// Adds minerals to the base. Only one thread at a time because it is locked.
+        /// Adds minerals to the base
         /// </summary>
-        /// <param name="amount"></param>
+        /// <param name="amount">Amount of minerals</param>
         public void AddMinerals(int amount)
         {
             lock(lockObject)
@@ -76,6 +96,10 @@ namespace StrategyRTS
             }
         }
 
+        /// <summary>
+        /// Adds gas to the base
+        /// </summary>
+        /// <param name="amount">Amount of gas</param>
         public void AddGas(int amount)
         {
             lock (lockObject)
@@ -84,6 +108,10 @@ namespace StrategyRTS
             }
         }
 
+        /// <summary>
+        /// Removes minerals from the base
+        /// </summary>
+        /// <param name="amount">Amount of minerals</param>
         public void RemoveMinerals(int amount)
         {
             lock (lockObject)
@@ -92,6 +120,10 @@ namespace StrategyRTS
             }
         }
 
+        /// <summary>
+        /// Removes gas from the base
+        /// </summary>
+        /// <param name="amount">Amount of gas</param>
         public void RemoveGas(int amount)
         {
             lock (lockObject)
@@ -99,11 +131,5 @@ namespace StrategyRTS
                 GasAmount -= amount;
             }
         }
-
-        public void SpawnWorker(Unit WorkerType)
-        {
-            GameWorld.Instantiate(WorkerType);
-        }
-
     }
 }

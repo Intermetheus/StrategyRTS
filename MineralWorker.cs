@@ -10,26 +10,20 @@ using System.Threading;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// Subclass of Unit. Worker that only mines minerals
+    /// </summary>
     class MineralWorker : Unit
     {
         private bool enterMine;
         private Random random;
         private Mineral enteredMineral;
 
-        public Mineral EnteredMineral { get => enteredMineral; set => enteredMineral = value; }
-
+        /// <summary>
+        /// Creates a worker
+        /// </summary>
         public MineralWorker()
         {
-            StartValues();
-        }
-
-        /// <summary>
-        /// Used for instantiating a Worker from the Base building
-        /// </summary>
-        /// <param name="sprite"></param>
-        public MineralWorker(Texture2D sprite)
-        {
-            this.sprite = sprite;
             StartValues();
         }
 
@@ -43,6 +37,9 @@ namespace StrategyRTS
             StartValues();
         }
 
+        /// <summary>
+        /// Start values of a worker. Used for sharing start values between different constructors
+        /// </summary>
         private void StartValues()
         {
             random = new Random();
@@ -56,11 +53,19 @@ namespace StrategyRTS
             scale = 1;
         }
 
+        /// <summary>
+        /// Loads the mineralWorker sprite
+        /// </summary>
+        /// <param name="content"></param>
         public override void LoadContent(ContentManager content)
         {
             sprite = content.Load<Texture2D>("mineralWorker");
         }
 
+        /// <summary>
+        /// Checks if the mineral collides with a Mineral or the Base
+        /// </summary>
+        /// <param name="other">Only uses Mineral or Base Class</param>
         public override void OnCollision(GameObject other)
         {
             if (other is Mineral)
@@ -68,7 +73,7 @@ namespace StrategyRTS
                 //Extract
                 if (!ResourceBeingHeld)
                 {
-                    EnteredMineral = (Mineral)other;
+                    enteredMineral = (Mineral)other;
                     if (canMove)
                     {
                         enterMine = true;
@@ -85,7 +90,9 @@ namespace StrategyRTS
                 }
             }
         }
-
+        /// <summary>
+        /// Behaviour method is run by the workerThread
+        /// </summary>
         public void Behaviour()
         {
             while(true)
@@ -112,18 +119,19 @@ namespace StrategyRTS
                 }
             }
         }
+
         /// <summary>
-        /// Enter a mine
+        /// Waits for access to the mineralSemaphore. Waits 10 seconds and relases.
         /// </summary>
         private void Enter()
         {
             canMove = false;
-            EnteredMineral.MineralSemaphore.WaitOne();
+            enteredMineral.MineralSemaphore.WaitOne();
             scale = 0;
-            Thread.Sleep(3000);
-            EnteredMineral.MineralSemaphore.Release();
+            Thread.Sleep(10000);
+            enteredMineral.MineralSemaphore.Release();
             ResourceBeingHeld = true;
-            EnteredMineral = null;
+            enteredMineral = null;
             scale = 1;
             canMove = true;
         }
