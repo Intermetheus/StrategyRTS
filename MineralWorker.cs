@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,41 +12,75 @@ namespace StrategyRTS
 {
     class MineralWorker : Unit
     {
-        static Semaphore mineralSemaphore = new Semaphore(0,3);
-        
+        private bool enterMine;
+        private Random random;
+        private Mineral enteredMineral;
+
+        public Mineral EnteredMineral { get => enteredMineral; set => enteredMineral = value; }
 
         public MineralWorker()
         {
+            StartValues();
+        }
+
+        /// <summary>
+        /// Used for instantiating a Worker from the Base building
+        /// </summary>
+        /// <param name="sprite"></param>
+        public MineralWorker(Texture2D sprite)
+        {
+            this.sprite = sprite;
+            StartValues();
+        }
+
+        /// <summary>
+        /// Instantiate a mineral worker with a non-unique id(used to give them names)
+        /// </summary>
+        /// <param name="id"></param>
+        public MineralWorker(int id)
+        {
+            this.id = id;
+            StartValues();
+        }
+
+        private void StartValues()
+        {
+            random = new Random();
             workerThread = new Thread(Behaviour);
-            Position = new Vector2(400, 400);
-            resourceBeingHeld = false;
-            speed = 250;
+            workerThread.IsBackground = true;
+            Position = new Vector2(400+random.Next(0,50), 400);
+            ResourceBeingHeld = false;
+            speed = 200;
             canMove = true;
+            enterMine = false;
+            scale = 1;
         }
 
         public override void LoadContent(ContentManager content)
         {
-            sprite = content.Load<Texture2D>("worker");
+            sprite = content.Load<Texture2D>("mineralWorker");
         }
 
         public override void OnCollision(GameObject other)
         {
             if (other is Mineral)
             {
-                //Extract()
-                if (!resourceBeingHeld)
-                {                    
-                    //Extract()
-                    resourceBeingHeld = true;
-                    Enter();
+                //Extract
+                if (!ResourceBeingHeld)
+                {
+                    EnteredMineral = (Mineral)other;
+                    if (canMove)
+                    {
+                        enterMine = true;
+                    }
                 }
             }
             if (other is Base)
             {
                 //Deposit
-                if (resourceBeingHeld)
+                if (ResourceBeingHeld)
                 {
-                    resourceBeingHeld = false;
+                    ResourceBeingHeld = false;
                     GameWorld.MyBase.AddMinerals(1);
                 }
             }
@@ -55,40 +90,42 @@ namespace StrategyRTS
         {
             while(true)
             {
-                if (!resourceBeingHeld)
+                if (!ResourceBeingHeld)
                 {
-                    //Because the worker does not have a resource
-                    //Search the GameWorld for a Mineral Deposit
-                    //Alternatively use a lock
                     SetDestination<Mineral>();
-                    
                 }
 
-                if (resourceBeingHeld)
+                if (ResourceBeingHeld)
                 {
-                    //Base destination, adding later 🦥 <--sloth emoji
-                    //perhaps make a method called SetDestination(gameobject)
                     SetDestination<Base>();
                 }
+
                 if (canMove)
                 {
                     Move();
                 }
+
+                if (enterMine && enteredMineral != null)
+                {
+                    enterMine = false;
+                    Enter();
+                }
             }
-
-            
         }
-
+        /// <summary>
+        /// Enter a mine
+        /// </summary>
         private void Enter()
         {
             canMove = false;
-            mineralSemaphore.Release();
-            mineralSemaphore.WaitOne();
-            Thread.Sleep(1000);
+            EnteredMineral.MineralSemaphore.WaitOne();
+            scale = 0;
+            Thread.Sleep(3000);
+            EnteredMineral.MineralSemaphore.Release();
+            ResourceBeingHeld = true;
+            EnteredMineral = null;
+            scale = 1;
             canMove = true;
-            mineralSemaphore.Release();
         }
-
-
     }
 }

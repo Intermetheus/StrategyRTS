@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace StrategyRTS
 {
@@ -10,7 +11,7 @@ namespace StrategyRTS
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private SpriteFont arial;
+        private static SpriteFont arial;
         private static GameTime gameTime; //Get the value of gameTime without using Update(GameTime gameTime)
         private static MouseState mouseState;
 
@@ -18,13 +19,18 @@ namespace StrategyRTS
         private static List<GameObject> newGameObjects = new List<GameObject>();
         private static List<GameObject> removeGameObjects = new List<GameObject>();
 
+        private static List<UI> UIObjects = new List<UI>();
 
         private static Base myBase = new Base();
+
+        private static ButtonState leftMouseButton = ButtonState.Released;   // Tracks the current state of the left mouse button
 
         public static List<GameObject> GameObjectsProp { get => gameObjects; set => gameObjects = value; }
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
         public static Base MyBase { get => myBase; set => myBase = value; }
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
+        public static SpriteFont Arial { get => arial; set => arial = value; }
+        public static List<GameObject> NewGameObjects { get => newGameObjects; set => newGameObjects = value; }
 
         public GameWorld()
         {
@@ -38,53 +44,91 @@ namespace StrategyRTS
         protected override void Initialize()
         {
             Mineral myMineral = new Mineral();
-            gameObjects.Add(myMineral);
+            Gas myGas = new Gas();
+            newGameObjects.Add(myMineral);
+            newGameObjects.Add(myGas);
 
-            gameObjects.Add(MyBase);
+            newGameObjects.Add(MyBase);
 
-            MineralWorker myWorker = new MineralWorker();
-            gameObjects.Add(myWorker);
+            for (int i = 0; i < 5; i++)
+            {
+                newGameObjects.Add(new MineralWorker());
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                newGameObjects.Add(new TimedGasWorker());
+            }
+
+            UIObjects.Add(new ConstructWorkerButton());
+            UIObjects.Add(new ResourceCounter());
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            arial = Content.Load<SpriteFont>("arial");
+            Arial = Content.Load<SpriteFont>("arial");
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             foreach (GameObject gameObject in gameObjects)
             {
                 gameObject.LoadContent(Content);
             }
+
+            foreach (UI UIObject in UIObjects)
+            {
+                UIObject.LoadContent(Content);
+            }
         }
 
-        private bool threadsStarted = false; //starts threads of workers created in initialize()
+        // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA private bool threadsStarted = false; //starts threads of workers created in initialize()
+        // HVAD FUYCK ER DIT PROBLEM!!!!
 
         protected override void Update(GameTime gameTime)
         {
-
-
-
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
             GameTimeProp = gameTime;
 
+            mouseState = Mouse.GetState();
 
-            if (!threadsStarted)
+            //if (!threadsStarted)
+            //{
+            //    //foreach (GameObject gameObject in gameObjects)
+            //    //{
+            //    //    if (gameObject is Unit)
+            //    //    {
+            //    //        //Call StartThread in Unit, even though we are accessing it from GameObject type
+            //    //        gameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, gameObject, null);
+            //    //    }
+            //    //}
+            //    myBase.StartThread();
+            //    threadsStarted = true;
+            //}
+
+
+            gameObjects.AddRange(NewGameObjects);
+
+
+            foreach (GameObject newGameObject in NewGameObjects)
             {
-                foreach (GameObject gameObject in gameObjects)
+                newGameObject.LoadContent(Content);
+
+                if (newGameObject is Unit)
                 {
-                    if (gameObject is Unit)
-                    {
-                        //Call StartThread in Unit, even though we are accessing it from GameObject type
-                        gameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, gameObject, null);
-                    }
+                    //Call StartThread in Unit, even though we are accessing it from GameObject type
+                    newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
                 }
-                threadsStarted = true;
+                if (newGameObject is Base)
+                {
+                    //Call StartThread in Unit, even though we are accessing it from GameObject type
+                    newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
+                }
             }
 
-            gameObjects.AddRange(newGameObjects);
-            newGameObjects.Clear();
+            NewGameObjects.Clear();
 
             foreach (GameObject gameObject in removeGameObjects)
             {
@@ -100,6 +144,11 @@ namespace StrategyRTS
                 }
             }
 
+            foreach (UI UIObject in UIObjects)
+            {
+                UIObject.Update(gameTime);
+            }
+
             base.Update(gameTime);
         }
 
@@ -107,6 +156,7 @@ namespace StrategyRTS
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            ConstructWorkerButton.drawMutex.WaitOne();
             spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
             foreach (GameObject gameObject in gameObjects)
@@ -114,9 +164,32 @@ namespace StrategyRTS
                 gameObject.Draw(spriteBatch);
             }
 
-            spriteBatch.DrawString(arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            foreach (UI UIObject in UIObjects)
+            {
+                UIObject.Draw(spriteBatch);
+            }
 
+            //spriteBatch.DrawString(Arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+
+#if DEBUG
+            //Draws numbers on the workers to identify them
+            foreach (GameObject gameObject in gameObjects)
+            {
+                if (gameObject is Unit)
+                {
+                    Unit mObject = (Unit)gameObject;
+                    spriteBatch.DrawString(Arial, mObject.Id.ToString(), new Vector2(mObject.Position.X, mObject.Position.Y), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+                if (gameObject is Base)
+                {
+                    Base bObject = (Base)gameObject;
+                    spriteBatch.DrawString(Arial, bObject.Name, new Vector2(bObject.Position.X - 20, bObject.Position.Y - 20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+                }
+            }
+#endif
             spriteBatch.End();
+
+            ConstructWorkerButton.drawMutex.ReleaseMutex();
 
             base.Draw(gameTime);
         }
@@ -127,7 +200,7 @@ namespace StrategyRTS
         /// <param name="gameObject">Gameobject to be added</param>
         public static void Instantiate(GameObject gameObject)
         {
-            newGameObjects.Add(gameObject);
+            NewGameObjects.Add(gameObject);
         }
 
         /// <summary>
@@ -137,6 +210,24 @@ namespace StrategyRTS
         public static void Destroy(GameObject gameObject)
         {
             removeGameObjects.Add(gameObject);
+        }
+
+        /// <summary>
+        /// Registers when the left mouse button is being released
+        /// </summary>
+        /// <returns></returns>
+        public static bool LeftMouseButtonReleased()
+        {
+            if (leftMouseButton == ButtonState.Pressed && Mouse.GetState().LeftButton == ButtonState.Released)
+            {
+                leftMouseButton = Mouse.GetState().LeftButton;
+                return true;
+            }
+            else
+            {
+                leftMouseButton = Mouse.GetState().LeftButton;
+                return false;
+            }
         }
     }
 }

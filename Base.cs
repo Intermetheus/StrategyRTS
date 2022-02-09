@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 
@@ -13,35 +14,52 @@ namespace StrategyRTS
     {
         private Thread baseThread;
         private static readonly object lockObject = new object();
-        private int mineralAmount;
+        private static int mineralAmount;
+        private static int gasAmount;
         private string name;
         private Texture2D[] workerSprites;
 
         public Base()
         {
-            baseThread = new Thread(Update);
-            name = "playerBase";
+            scale = 1;
+            baseThread = new Thread(BaseThreadUpdate);
+            baseThread.IsBackground = true;
+            Name = "playerBase";
             MineralAmount = 0;
             position = new Vector2(400, 400);
         }
 
-        public int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
+        public void StartThread()
+        {
+            baseThread.Start();
+        }
+
+        public static int MineralAmount { get => mineralAmount; set => mineralAmount = value; }
+        public string Name { get => name; set => name = value; }
+        public static int GasAmount { get => gasAmount; set => gasAmount = value; }
 
         public override void LoadContent(ContentManager content)
         {
             workerSprites = new Texture2D[2];
-            workerSprites[0] = content.Load<Texture2D>("worker");
-            workerSprites[1] = content.Load<Texture2D>("worker");
+            workerSprites[0] = content.Load<Texture2D>("mineralWorker");
+            workerSprites[1] = content.Load<Texture2D>("gasWorker");
 
 
             sprite = content.Load<Texture2D>("base");
         }
 
-        public void Update()
+        /// <summary>
+        /// Base Thread
+        /// </summary>
+        public void BaseThreadUpdate()
         {
-            if (this.collisionBox.Contains(GameWorld.MouseStateProp.Position) && GameWorld.MouseStateProp.LeftButton == ButtonState.Pressed)
+            while (true)
             {
-                SpawnWorker(new MineralWorker());
+                if (gasAmount >= 10)
+                {
+                    RemoveGas(1);
+                    GameWorld.NewGameObjects.Add(new MineralWorker());
+                }
             }
         }
 
@@ -54,6 +72,30 @@ namespace StrategyRTS
             lock(lockObject)
             {
                 mineralAmount += amount;
+            }
+        }
+
+        public void AddGas(int amount)
+        {
+            lock (lockObject)
+            {
+                GasAmount += amount;
+            }
+        }
+
+        public void RemoveMinerals(int amount)
+        {
+            lock (lockObject)
+            {
+                mineralAmount -= amount;
+            }
+        }
+
+        public void RemoveGas(int amount)
+        {
+            lock (lockObject)
+            {
+                GasAmount -= amount;
             }
         }
 

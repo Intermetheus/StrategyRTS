@@ -10,10 +10,16 @@ namespace StrategyRTS
 {
     class Mineral : ResourceDeposit
     {
+        private Semaphore mineralSemaphore = new Semaphore(3, 3);
+
+        public  Semaphore MineralSemaphore { get => mineralSemaphore; set => mineralSemaphore = value; }
+
         public Mineral()
         {
+            scale = 1;
             position = new Vector2(50, 50);
         }
+
         public override void LoadContent(ContentManager content)
         {
             sprite = content.Load<Texture2D>("mineral");
