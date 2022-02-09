@@ -27,15 +27,45 @@ namespace StrategyRTS
 
         private static ButtonState leftMouseButton = ButtonState.Released;   // Tracks the current state of the left mouse button
 
+        /// <summary>
+        /// Allows easier access to the gameObjects List
+        /// </summary>
         public static List<GameObject> GameObjectsProp { get => gameObjects; set => gameObjects = value; }
+
+        /// <summary>
+        /// Allows easier access to the GameTime Class
+        /// </summary>
         public static GameTime GameTimeProp { get => gameTime; set => gameTime = value; }
+
+        /// <summary>
+        /// Allows easier access to the Base Class
+        /// </summary>
         public static Base MyBase { get => myBase; set => myBase = value; }
+
+        /// <summary>
+        /// Allows easier to the MouseState Struct
+        /// </summary>
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
+
+        /// <summary>
+        /// Allows easier access to the SpriteFont
+        /// </summary>
         public static SpriteFont Arial { get => arial; set => arial = value; }
+
+        /// <summary>
+        /// Allows easier access to the newGameObjects List
+        /// </summary>
         public static List<GameObject> NewGameObjects { get => newGameObjects; set => newGameObjects = value; }
 
+        /// <summary>
+        /// Allows easier access to the lock object
+        /// <para>Prevents multiple threads from creating race conditions</para>
+        /// </summary>
         public static object CreateWorkerLock => createWorkerLock;
 
+        /// <summary>
+        /// Sets the applications size to 1600x900
+        /// </summary>
         public GameWorld()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -45,6 +75,9 @@ namespace StrategyRTS
             IsMouseVisible = true;
         }
 
+        /// <summary>
+        /// Adds the ResourceDeposits, UI and the Base to the gameObjects List
+        /// </summary>
         protected override void Initialize()
         {
             Mineral myMineral = new Mineral();
@@ -70,10 +103,13 @@ namespace StrategyRTS
             base.Initialize();
         }
 
+        /// <summary>
+        /// Runs the LoadContent() Method on every object in UIObject and gameObject.
+        /// </summary>
         protected override void LoadContent()
         {
-            Arial = Content.Load<SpriteFont>("arial");
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            Arial = Content.Load<SpriteFont>("arial");
 
             foreach (GameObject gameObject in gameObjects)
             {
@@ -86,9 +122,10 @@ namespace StrategyRTS
             }
         }
 
-        // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA private bool threadsStarted = false; //starts threads of workers created in initialize()
-        // HVAD FUYCK ER DIT PROBLEM!!!!
-
+        /// <summary>
+        /// Runs the Update() method on the UIObjects. Adds/Removes new objects to the game. Checks collisions between objects.
+        /// </summary>
+        /// <param name="gameTime"></param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -97,21 +134,10 @@ namespace StrategyRTS
             GameTimeProp = gameTime;
 
             mouseState = Mouse.GetState();
-
-            //if (!threadsStarted)
-            //{
-            //    //foreach (GameObject gameObject in gameObjects)
-            //    //{
-            //    //    if (gameObject is Unit)
-            //    //    {
-            //    //        //Call StartThread in Unit, even though we are accessing it from GameObject type
-            //    //        gameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, gameObject, null);
-            //    //    }
-            //    //}
-            //    myBase.StartThread();
-            //    threadsStarted = true;
-            //}
             
+            //This area is locked in order to prevent destination array from being changed. Therefore, creating a race condition.
+            //In the Unit Class the SetDestination() method loops through the GameObjects list.
+            //The game will crash if this list is changed while that loop occurs.
             lock(CreateWorkerLock)
             {
                 gameObjects.AddRange(NewGameObjects);
@@ -135,6 +161,9 @@ namespace StrategyRTS
                 NewGameObjects.Clear();
             }
 
+            //This area is locked for similliar reasons as above.
+            //If an object is removed while SetDestination() is copying the gameObjects List.
+            //The program will return a nullReferenceException because gameObject was null.
             lock (CreateWorkerLock)
             {
                 foreach (GameObject gameObject in removeGameObjects)
@@ -160,6 +189,10 @@ namespace StrategyRTS
             base.Update(gameTime);
         }
 
+        /// <summary>
+        /// Runs the relevant Draw() Methods on gameObjects.
+        /// </summary>
+        /// <param name="gameTime"></param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -177,10 +210,9 @@ namespace StrategyRTS
                 UIObject.Draw(spriteBatch);
             }
 
-            //spriteBatch.DrawString(Arial, "Minerals: " + MyBase.MineralAmount, new Vector2(20,20), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
-
 #if DEBUG
-            //Draws numbers on the workers to identify them
+            //Draws numbers on the workers to identify them.
+            //These numbers will be 0 unless they are made using a specific constructor.
             foreach (GameObject gameObject in gameObjects)
             {
                 if (gameObject is Unit)
