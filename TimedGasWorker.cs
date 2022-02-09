@@ -10,6 +10,9 @@ using System.Threading;
 
 namespace StrategyRTS
 {
+    /// <summary>
+    /// A worker that mines gas and dies
+    /// </summary>
     class TimedGasWorker : Unit
     {
         private bool enterMine;
@@ -19,28 +22,27 @@ namespace StrategyRTS
         private bool isAlive;
         private float startTime; //gameTime when the unit was created
 
-        public Gas EnteredGas { get => enteredGas; set => enteredGas = value; }
-
+        /// <summary>
+        /// Creates a TimedGasWorker
+        /// </summary>
         public TimedGasWorker()
         {
             StartValues();
         }
-        /// <summary>
-        /// Used for instantiating a Worker
-        /// </summary>
-        /// <param name="sprite"></param>
-        public TimedGasWorker(Texture2D sprite)
-        {
-            this.sprite = sprite;
-            StartValues();
-        }
 
+        /// <summary>
+        /// Creates a timed gas worker with a number used for debugging
+        /// </summary>
+        /// <param name="id"></param>
         public TimedGasWorker(int id)
         {
             this.id = id;
             StartValues();
         }
 
+        /// <summary>
+        /// Makes it easier to set the same values in different constructors.
+        /// </summary>
         private void StartValues()
         {
             isAlive = true;
@@ -53,20 +55,29 @@ namespace StrategyRTS
             canMove = true;
             enterMine = false;
             scale = 1;
-            aliveTime = 3000;
+            aliveTime = 30000;
         }
 
+        //Overrides the StartThread from Unit. Because GasWorker also needs to know how much time will pass.
         public override void StartThread()
         {
             workerThread.Start();
             startTime = (float)GameWorld.GameTimeProp.TotalGameTime.TotalMilliseconds;
         }
 
+        /// <summary>
+        /// Loads the gasWorker sprite
+        /// </summary>
+        /// <param name="content"></param>
         public override void LoadContent(ContentManager content)
         {
             sprite = content.Load<Texture2D>("gasWorker");
         }
 
+        /// <summary>
+        /// Checks collision with Base or Gas
+        /// </summary>
+        /// <param name="other"></param>
         public override void OnCollision(GameObject other)
         {
             if (other is Gas)
@@ -74,7 +85,7 @@ namespace StrategyRTS
                 //Extract
                 if (!ResourceBeingHeld)
                 {
-                    EnteredGas = (Gas)other;
+                    enteredGas = (Gas)other;
                     if (canMove)
                     {
                         enterMine = true;
@@ -97,6 +108,9 @@ namespace StrategyRTS
             }
         }
 
+        /// <summary>
+        /// Runs the behaviour of the gasWorker through the workerThread
+        /// </summary>
         public void Behaviour()
         {
             while (isAlive)
@@ -125,7 +139,7 @@ namespace StrategyRTS
         }
 
         /// <summary>
-        /// Enter a mine
+        /// Waits for access to the gasSemaphore
         /// </summary>
         private void Enter()
         {
