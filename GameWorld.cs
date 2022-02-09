@@ -15,6 +15,8 @@ namespace StrategyRTS
         private static GameTime gameTime; //Get the value of gameTime without using Update(GameTime gameTime)
         private static MouseState mouseState;
 
+        private static readonly object createWorkerLock = new object();
+
         private static List<GameObject> gameObjects = new List<GameObject>();
         private static List<GameObject> newGameObjects = new List<GameObject>();
         private static List<GameObject> removeGameObjects = new List<GameObject>();
@@ -31,6 +33,8 @@ namespace StrategyRTS
         public static MouseState MouseStateProp { get => mouseState; set => mouseState = value; }
         public static SpriteFont Arial { get => arial; set => arial = value; }
         public static List<GameObject> NewGameObjects { get => newGameObjects; set => newGameObjects = value; }
+
+        public static object CreateWorkerLock => createWorkerLock;
 
         public GameWorld()
         {
@@ -107,32 +111,36 @@ namespace StrategyRTS
             //    myBase.StartThread();
             //    threadsStarted = true;
             //}
-
-
-            gameObjects.AddRange(NewGameObjects);
-
-
-            foreach (GameObject newGameObject in NewGameObjects)
+            
+            lock(CreateWorkerLock)
             {
-                newGameObject.LoadContent(Content);
+                gameObjects.AddRange(NewGameObjects);
+            
+                foreach (GameObject newGameObject in NewGameObjects.ToList())
+                {
+                    newGameObject.LoadContent(Content);
 
-                if (newGameObject is Unit)
-                {
-                    //Call StartThread in Unit, even though we are accessing it from GameObject type
-                    newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
+                    if (newGameObject is Unit)
+                    {
+                        //Call StartThread in Unit, even though we are accessing it from GameObject type
+                        newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
+                    }
+                    if (newGameObject is Base)
+                    {
+                        //Call StartThread in Unit, even though we are accessing it from GameObject type
+                        newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
+                    }
                 }
-                if (newGameObject is Base)
-                {
-                    //Call StartThread in Unit, even though we are accessing it from GameObject type
-                    newGameObject.GetType().InvokeMember("StartThread", System.Reflection.BindingFlags.InvokeMethod, null, newGameObject, null);
-                }
+
+                NewGameObjects.Clear();
             }
 
-            NewGameObjects.Clear();
-
-            foreach (GameObject gameObject in removeGameObjects)
+            lock (CreateWorkerLock)
             {
-                gameObjects.Remove(gameObject);
+                foreach (GameObject gameObject in removeGameObjects)
+                {
+                    gameObjects.Remove(gameObject);
+                }
             }
 
             //Check collisions

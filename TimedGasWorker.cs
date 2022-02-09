@@ -53,7 +53,7 @@ namespace StrategyRTS
             canMove = true;
             enterMine = false;
             scale = 1;
-            aliveTime = 30000;
+            aliveTime = 3000;
         }
 
         public override void StartThread()

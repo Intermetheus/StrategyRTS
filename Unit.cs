@@ -50,14 +50,18 @@ namespace StrategyRTS
         /// <param name="type"></param>
         protected void SetDestination<T>()
         {
-            //Use ToList() to create a copy of gameObjects to prevent changes to a list being looped by another thread
-            foreach (GameObject gameObject in GameWorld.GameObjectsProp.ToList())
+            lock(GameWorld.CreateWorkerLock)
             {
-                if (gameObject.GetType() == typeof(T))
+                //Use ToList() to create a copy of gameObjects to prevent changes to a list being looped by another thread
+                foreach (GameObject gameObject in GameWorld.GameObjectsProp.ToList())
                 {
-                    destination = gameObject.Position;
+                    if (gameObject.GetType() == typeof(T))
+                    {
+                        destination = gameObject.Position;
+                    }
                 }
             }
+            
         }
 
         public void Extract()

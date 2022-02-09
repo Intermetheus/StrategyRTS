@@ -26,6 +26,7 @@ namespace StrategyRTS
             baseThread.IsBackground = true;
             Name = "playerBase";
             MineralAmount = 0;
+            GasAmount = 0;
             position = new Vector2(400, 400);
         }
 
