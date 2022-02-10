@@ -28,6 +28,10 @@ namespace StrategyRTS
             
         }
 
+        /// <summary>
+        /// Draws current resource amounts on screen
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(GameWorld.Arial, "Minerals: " + Base.MineralAmount, position, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);

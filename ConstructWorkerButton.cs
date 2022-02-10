@@ -37,12 +37,20 @@ namespace StrategyRTS
             bounds = new Rectangle((int)position.X, (int)position.Y, sprite.Width, sprite.Height);
         }
 
+        /// <summary>
+        /// Draws button and text explaining button function
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(sprite, position, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(GameWorld.Arial, $"New Gas Worker: {gasWorkerCost} Mineral", position + new Vector2(-100, 50), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f); ;
         }
 
+        /// <summary>
+        /// Checks if button has been clicked and resources are sufficient, then spawns worker
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
             if (Base.MineralAmount >= gasWorkerCost && bounds.Contains(GameWorld.MouseStateProp.Position) && GameWorld.LeftMouseButtonReleased())
