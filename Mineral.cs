@@ -13,7 +13,7 @@ namespace StrategyRTS
     /// </summary>
     class Mineral : ResourceDeposit
     {
-        private Semaphore mineralSemaphore = new Semaphore(3, 3);
+        private Semaphore mineralSemaphore = new Semaphore(5, 5);
 
         /// <summary>
         /// Limits the amount of threads that can access this class

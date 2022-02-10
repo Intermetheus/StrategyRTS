@@ -87,12 +87,12 @@ namespace StrategyRTS
 
             newGameObjects.Add(MyBase);
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 2; i++)
             {
                 newGameObjects.Add(new MineralWorker());
             }
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 0; i++)
             {
                 newGameObjects.Add(new TimedGasWorker());
             }

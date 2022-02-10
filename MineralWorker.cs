@@ -128,7 +128,7 @@ namespace StrategyRTS
             canMove = false;
             enteredMineral.MineralSemaphore.WaitOne();
             scale = 0;
-            Thread.Sleep(10000);
+            Thread.Sleep(3000);
             enteredMineral.MineralSemaphore.Release();
             ResourceBeingHeld = true;
             enteredMineral = null;

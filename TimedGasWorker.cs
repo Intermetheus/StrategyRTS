@@ -146,7 +146,7 @@ namespace StrategyRTS
             canMove = false;
             enteredGas.GasSemaphore.WaitOne();
             scale = 0;
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
             enteredGas.GasSemaphore.Release();
             ResourceBeingHeld = true;
             enteredGas = null;

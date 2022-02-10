@@ -13,7 +13,7 @@ namespace StrategyRTS
     /// </summary>
     class Gas : ResourceDeposit
     {
-        private Semaphore gasSemaphore = new Semaphore(5, 5);
+        private Semaphore gasSemaphore = new Semaphore(3, 3);
 
         /// <summary>
         /// Limits the amount of threads that can access this class

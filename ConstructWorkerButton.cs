@@ -15,7 +15,7 @@ namespace StrategyRTS
     {
         private Texture2D sprite;
         private Rectangle bounds;
-        private int gasWorkerCost = 1;
+        private int gasWorkerCost = 5;
         //public static Mutex drawMutex = new Mutex();        
 
         public ConstructWorkerButton()

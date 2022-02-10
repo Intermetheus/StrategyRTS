@@ -76,9 +76,9 @@ namespace StrategyRTS
         {
             while (true)
             {
-                if (gasAmount >= 10)
+                if (gasAmount >= 5)
                 {
-                    RemoveGas(1);
+                    RemoveGas(5);
                     GameWorld.NewGameObjects.Add(new MineralWorker());
                 }
             }
